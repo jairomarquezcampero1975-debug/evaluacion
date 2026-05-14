@@ -1,0 +1,1 @@
+console.log("Sistema web cargado correctamente");
