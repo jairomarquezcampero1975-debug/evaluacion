@@ -1,17 +1,25 @@
 <?php
-include("../config/conexion.php");
-
-$id = $_GET['id'];
-
-mysqli_query($conexion,"
-UPDATE detalle_carrito
-SET cantidad = cantidad - 1,
-subtotal = subtotal - (
-    SELECT precio
-    FROM producto
-    WHERE id_producto = detalle_carrito.id_producto
-)
-WHERE id_detalle_carrito='$id'
-AND cantidad > 1
-");
+require_once "../includes/auth.php";
+protegerRuta();
+soloCliente();
+require_once "../config/conexion.php";
+$id_usuario = $_SESSION['id_usuario'];
+$id_producto = (int)($_GET['id'] ?? 0);
+$stmt = mysqli_prepare($conexion, "SELECT dc.cantidad, p.precio, dc.id_detalle_carrito FROM carrito c INNER JOIN detalle_carrito dc ON c.id_carrito=dc.id_carrito INNER JOIN producto p ON dc.id_producto=p.id_producto WHERE c.id_usuario=? AND c.estado='activo' AND dc.id_producto=?");
+mysqli_stmt_bind_param($stmt, "ii", $id_usuario, $id_producto);
+mysqli_stmt_execute($stmt);
+$d = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+if ($d) {
+    if ($d['cantidad'] <= 1) {
+        $stmt = mysqli_prepare($conexion, "DELETE FROM detalle_carrito WHERE id_detalle_carrito=?");
+        mysqli_stmt_bind_param($stmt, "i", $d['id_detalle_carrito']);
+    } else {
+        $cantidad = $d['cantidad'] - 1;
+        $subtotal = $cantidad * $d['precio'];
+        $stmt = mysqli_prepare($conexion, "UPDATE detalle_carrito SET cantidad=?, subtotal=? WHERE id_detalle_carrito=?");
+        mysqli_stmt_bind_param($stmt, "idi", $cantidad, $subtotal, $d['id_detalle_carrito']);
+    }
+    mysqli_stmt_execute($stmt);
+}
+header("Location: inicio.php"); exit();
 ?>

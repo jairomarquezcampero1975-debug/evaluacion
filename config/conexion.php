@@ -7,8 +7,8 @@ $base_datos = "sistema_ventas";
 $conexion = mysqli_connect($servidor, $usuario, $password, $base_datos);
 
 if (!$conexion) {
-    die("Error de conexion: " . mysqli_connect_error());
+    die("Error de conexion a la base de datos");
 }
 
-mysqli_set_charset($conexion, "utf8");
+mysqli_set_charset($conexion, "utf8mb4");
 ?>

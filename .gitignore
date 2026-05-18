@@ -1,0 +1,10 @@
+.DS_Store
+Thumbs.db
+.env
+*.log
+.vscode/
+.idea/
+/vendor/
+node_modules/
+/uploads/productos/*
+!/uploads/productos/.gitkeep
