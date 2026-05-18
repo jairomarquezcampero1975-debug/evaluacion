@@ -1,0 +1,65 @@
+REVISION PROFESIONAL DEL PROYECTO
+
+Diagnostico del ZIP original:
+- El proyecto ya tenia estructura basica correcta: admin, cliente, includes, config, database y assets.
+- Existia landing, login, registro, 2FA simulado, roles, carrito, favoritos, ventas y CRUD basico.
+- El SQL tenia tablas principales y tambien tablas necesarias para carrito.
+- El repositorio Git tenia commits, remoto y rama principal.
+
+Problemas encontrados:
+- Muchas consultas estaban hechas concatenando variables directamente en SQL.
+- Varias paginas usaban include normal y podian provocar problemas si se incluia el mismo archivo varias veces.
+- No habia subida real de imagenes de productos, solo texto con ruta manual.
+- No existia imagen por defecto funcional si el producto no tenia imagen.
+- Algunas rutas y redirecciones dependian de la carpeta y podian fallar.
+- El carrito funcionaba, pero faltaba mayor control de stock y transaccion segura al confirmar compra.
+- El diseno estaba mejorado, pero no era uniforme en todo admin y cliente.
+- Faltaba .gitignore para evitar subir carpetas temporales o archivos innecesarios.
+- El README estaba vacio.
+
+Correcciones realizadas:
+- Se uso require_once en archivos importantes.
+- Se centralizo la seguridad en includes/auth.php.
+- Se agrego funcion e() para escapar salidas HTML.
+- Se agrego funcion imagenProducto() para manejar imagen real o imagen por defecto.
+- Se cambiaron consultas principales a sentencias preparadas con mysqli_prepare.
+- Se mejoro login con password_verify y 2FA simulado.
+- Se agrego session_regenerate_id despues de validar 2FA.
+- Se mejoro registro con password_hash.
+- Se agrego subida real de imagenes en productos y edicion de productos.
+- Se agrego carpeta uploads/productos.
+- Se agrego imagen por defecto en assets/img/default-product.svg.
+- Se mejoro panel admin, dashboard, productos, categorias, stock, ventas y usuarios.
+- Se mejoro cliente: productos, filtros, favoritos, carrito, detalle e historial.
+- Se agrego transaccion en confirmar compra para registrar venta y descontar stock de forma segura.
+- Se agrego SQL completo con DROP DATABASE, CREATE DATABASE, PK, FK, UNIQUE y datos de prueba.
+- Se agrego README y .gitignore.
+- Se reviso sintaxis PHP con php -l en todos los archivos.
+
+Base de datos:
+- Nombre: sistema_ventas
+- Archivo SQL: database/sistema_ventas.sql
+
+Usuarios de prueba:
+- Admin: admin@gmail.com / Admin123
+- Cliente: cliente@gmail.com / Cliente123
+
+Instalacion en XAMPP:
+1. Copiar la carpeta evaluacion_corregido dentro de C:\xampp\htdocs\
+2. Abrir XAMPP.
+3. Activar Apache y MySQL.
+4. Entrar a http://localhost/phpmyadmin
+5. Importar database/sistema_ventas.sql
+6. Abrir http://localhost/evaluacion_corregido/index.php
+
+Defensa corta:
+- Login: busca el usuario por correo y valida la clave con password_verify.
+- Registro: guarda contrasenas seguras con password_hash.
+- 2FA: despues del login se genera un codigo temporal y solo deja entrar si coincide.
+- Roles: admin entra al dashboard y cliente entra al panel de productos.
+- Rutas: las paginas protegidas usan protegerRuta, soloAdmin y soloCliente.
+- Base de datos: tiene PK, FK y tablas relacionadas para usuarios, productos, categorias, ventas, detalles, favoritos y carrito.
+- Carrito: usa carrito y detalle_carrito, calcula subtotales y total.
+- Compra: crea venta, detalle_venta y descuenta stock.
+- Favoritos: evita duplicados con UNIQUE entre usuario y producto.
+- GitHub: usar commits separados por modulo y explicar que cada integrante trabajo en partes distintas.

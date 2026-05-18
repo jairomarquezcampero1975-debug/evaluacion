@@ -1,78 +1,51 @@
 <?php
-session_start();
-include("config/conexion.php");
+require_once "includes/auth.php";
+require_once "config/conexion.php";
 
 $mensaje = "";
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $correo = $_POST['correo'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $correo = limpiar($_POST['correo']);
     $contrasena = $_POST['contrasena'];
 
-    $sql = "SELECT * FROM usuario WHERE correo = '$correo'";
-    $resultado = mysqli_query($conexion, $sql);
+    $stmt = mysqli_prepare($conexion, "SELECT * FROM usuario WHERE correo=? LIMIT 1");
+    mysqli_stmt_bind_param($stmt, "s", $correo);
+    mysqli_stmt_execute($stmt);
+    $resultado = mysqli_stmt_get_result($stmt);
 
-    if (mysqli_num_rows($resultado) == 1) {
-        $usuario = mysqli_fetch_assoc($resultado);
-
+    if ($usuario = mysqli_fetch_assoc($resultado)) {
         if (password_verify($contrasena, $usuario['contrasena'])) {
-            $codigo = rand(100000, 999999);
-
+            $codigo = random_int(100000, 999999);
             $_SESSION['temp_id_usuario'] = $usuario['id_usuario'];
             $_SESSION['temp_nombre'] = $usuario['nombre'];
             $_SESSION['temp_rol'] = $usuario['rol'];
-            $_SESSION['codigo_2fa'] = $codigo;
+            $_SESSION['codigo_2fa'] = (string)$codigo;
 
-            $id_usuario = $usuario['id_usuario'];
-            mysqli_query($conexion, "UPDATE usuario SET codigo_2fa = '$codigo', estado_2fa = 0 WHERE id_usuario = $id_usuario");
-
+            $stmt2 = mysqli_prepare($conexion, "UPDATE usuario SET codigo_2fa=?, estado_2fa=0 WHERE id_usuario=?");
+            mysqli_stmt_bind_param($stmt2, "si", $_SESSION['codigo_2fa'], $usuario['id_usuario']);
+            mysqli_stmt_execute($stmt2);
             header("Location: verificar_2fa.php");
             exit();
-        } else {
-            $mensaje = "Contrasena incorrecta";
         }
-    } else {
-        $mensaje = "Usuario no encontrado";
     }
+    $mensaje = "Correo o contrasena incorrectos";
 }
-
-include("includes/header.php");
-include("includes/navbar.php");
+require_once "includes/header.php";
+require_once "includes/navbar.php";
 ?>
-
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow">
-                <div class="card-header bg-dark text-white text-center">
-                    <h4>Inicio de sesion</h4>
-                </div>
-
-                <div class="card-body">
-                    <?php if ($mensaje != "") { ?>
-                        <div class="alert alert-danger"><?php echo $mensaje; ?></div>
-                    <?php } ?>
-
-                    <form method="POST">
-                        <div class="mb-3">
-                            <label>Correo</label>
-                            <input type="email" name="correo" class="form-control" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label>Contrasena</label>
-                            <input type="password" name="contrasena" class="form-control" required>
-                        </div>
-
-                        <button type="submit" class="btn btn-dark w-100">Ingresar</button>
-                    </form>
-
-                    <p class="mt-3 text-center">
-                        No tienes cuenta? <a href="registro.php">Registrate</a>
-                    </p>
-                </div>
+<div class="container">
+    <div class="auth-box">
+        <div class="card">
+            <div class="card-header text-white text-center"><h4>Inicio de sesion</h4></div>
+            <div class="card-body">
+                <?php if ($mensaje) { ?><div class="alert alert-danger"><?php echo e($mensaje); ?></div><?php } ?>
+                <form method="POST">
+                    <div class="mb-3"><label>Correo</label><input type="email" name="correo" class="form-control" required></div>
+                    <div class="mb-3"><label>Contrasena</label><input type="password" name="contrasena" class="form-control" required></div>
+                    <button class="btn btn-dark w-100">Ingresar</button>
+                </form>
+                <p class="mt-3 text-center">No tienes cuenta? <a href="registro.php">Registrate</a></p>
             </div>
         </div>
     </div>
 </div>
-
-<?php include("includes/footer.php"); ?>
+<?php require_once "includes/footer.php"; ?>

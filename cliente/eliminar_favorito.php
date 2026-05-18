@@ -5,8 +5,8 @@ soloCliente();
 require_once "../config/conexion.php";
 $id_usuario = $_SESSION['id_usuario'];
 $id_producto = (int)($_GET['id'] ?? 0);
-$stmt = mysqli_prepare($conexion, "DELETE dc FROM detalle_carrito dc INNER JOIN carrito c ON dc.id_carrito=c.id_carrito WHERE c.id_usuario=? AND c.estado='activo' AND dc.id_producto=?");
+$stmt = mysqli_prepare($conexion, "DELETE FROM favorito WHERE id_usuario=? AND id_producto=?");
 mysqli_stmt_bind_param($stmt, "ii", $id_usuario, $id_producto);
 mysqli_stmt_execute($stmt);
-header("Location: inicio.php"); exit();
+header("Location: favoritos.php"); exit();
 ?>
