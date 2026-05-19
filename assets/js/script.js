@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const forms = document.querySelectorAll('form');
-    forms.forEach(function (form) {
+    document.querySelectorAll('form').forEach(function (form) {
         form.addEventListener('submit', function (e) {
             let ok = true;
             form.querySelectorAll('[required]').forEach(function (campo) {
@@ -17,4 +16,18 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+
+    const elementos = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(function (entradas) {
+            entradas.forEach(function (entrada) {
+                if (entrada.isIntersecting) {
+                    entrada.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15 });
+        elementos.forEach(function (el) { observer.observe(el); });
+    } else {
+        elementos.forEach(function (el) { el.classList.add('visible'); });
+    }
 });
