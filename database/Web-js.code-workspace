@@ -1,0 +1,35 @@
+{
+	"folders": [
+		{
+			"path": "D:/Web-js"
+		},
+		{
+			"path": "../../../../Users/Santiago/Desktop/cffff"
+		},
+		{
+			"path": "../../proyecto1"
+		},
+		{
+			"path": "../../manejo_imagenes"
+		},
+		{
+			"path": "D:/April/Lirios"
+		},
+		{
+			"path": "../../insta"
+		},
+		{
+			"path": "../../tienda"
+		},
+		{
+			"path": "../../tiendita"
+		},
+		{
+			"name": "evaluacion",
+			"path": ".."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "Lirios"
+	}
+}
