@@ -102,6 +102,7 @@ require_once "includes/navbar.php";
                             type="email"
                             name="correo"
                             class="form-control"
+                            placeholder="Tu Correo"
                             required
                         >
                     </div>
@@ -112,7 +113,7 @@ require_once "includes/navbar.php";
                             type="password"
                             name="contrasena"
                             class="form-control"
-                            placeholder="Tu contrasena"
+                            placeholder="Tu Contraseña"
                             required
                         >
                     </div>
